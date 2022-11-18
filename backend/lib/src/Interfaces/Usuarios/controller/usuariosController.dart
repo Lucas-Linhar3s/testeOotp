@@ -4,6 +4,7 @@ import 'package:backend/src/Interfaces/Auth/authResources.dart';
 import 'package:backend/src/Interfaces/Usuarios/repository/usuariosRepo.dart';
 import 'package:backend/src/Interfaces/Usuarios/viewModels/modelUsuario.dart';
 import 'package:backend/src/Services/BCrypt/configBCrypt.dart';
+import 'package:backend/src/Services/Database/sqlite.dart';
 import 'package:backend/src/Services/Totp/configTotp.dart';
 import 'package:backend/src/Services/request_extractor/configExtractor.dart';
 import 'package:shelf/shelf.dart';
@@ -39,6 +40,11 @@ class IUsuarioController extends Resource {
       if (result != 0) {
         final totp =
             ConfigTotp().generateOotp(id: result.toString(), email: email);
+        final query = ConfigDB()
+            .Sqlite()
+            .prepare('INSERT INTO totp (qrCode, id_usuario) VALUES(?,?);');
+        query.execute([totp, result]);
+        query.dispose();
         final map = {
           'Sucesso': ['Usuario criado com sucesso! id: $result'],
           "Totp": [totp],
@@ -66,21 +72,6 @@ class IUsuarioController extends Resource {
     final map = {'Error': 'Voçê não tem permissão para essa operação!'};
     return Response(500, body: jsonEncode(map));
   }
-
-//   Future<Response> _putSenha(ModularArguments req) async {
-//     ModelUsuarios usuario =
-//         ModelUsuarios(id: req.data['id'], senha: req.data['senha']);
-
-//     final result = _repository.putSenhaUsuario(usuario);
-//     if (result != 0) {
-//       final map = {'success': 'Senha atualizada com sucesso!'};
-//       return Response(200, body: jsonEncode(map), headers: _jsonEncode);
-//     }
-//     final map = {
-//       'Error': 'erro ao tentar atualizar senha do usuario id: ${usuario.id}'
-//     };
-//     return Response(500, body: jsonEncode(map), headers: _jsonEncode);
-//   }
 
   Future<Response> _deleteUsuarios(
       ModularArguments req, Request request) async {

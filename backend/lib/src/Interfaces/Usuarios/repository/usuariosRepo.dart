@@ -35,13 +35,6 @@ class IUsuariosRepo {
     return 0;
   }
 
-//   int putSenhaUsuario(ModelUsuarios usuarios) {
-//     final query = _db.prepare('UPDATE usuario SET senha=? WHERE id=?');
-//     query.execute([usuarios.senha, usuarios.id]);
-//     final result = _db.getUpdatedRows();
-//     query.dispose();
-//     return result;
-//   }
 
   int deleteUsuario(int id, String token) {
     final payload = _jwt.getPayload(token);
