@@ -1,0 +1,176 @@
+openapi: 3.0.0
+info:
+  description: "API projeto UGE"
+  version: "0.0.1"
+  title: "Projeto UGE"
+servers:
+  - url: http://localhost:3333
+    description: Local server
+tags:
+  - name: "produtos"
+    description: "Access to Produtos"
+  - name: "usuarios"
+    description: "Access to usuarios"
+  - name: "login"
+    description: "Access to login"
+paths:
+  /produtos?offset={offset}&pageSize={pageSize}:
+    get:
+      tags:
+        - "produtos"
+      summary: Returns a list of produtos.
+      parameters:
+        - in: path
+          name: offset
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: pageSize
+          required: true
+          schema:
+            type: integer
+      description: Get All Produtos
+      responses:
+        "200":
+          description: A JSON array of produtos names
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Produtos"
+        "500":
+          description: Internal Server Error
+  /produtos:
+    post:
+      tags:
+        - "produtos"
+      summary: Creates a new produto.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Produtos" # <-------
+      responses:
+        "201":
+          description: '{"message": "Produto criado com sucesso!"}'
+        "500":
+          description: Internal Server Error
+  /produtos/{id}:
+    put:
+      tags:
+        - "produtos"
+      summary: Update a produto
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Produtos"
+      responses:
+        "200":
+          description: '{"message": "Produto com id: {id} foi atualizado com sucesso!"}'
+        "500":
+          description: Internal server error
+    delete:
+      tags:
+        - "produtos"
+      summary: Delete a produto
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: '{"message": "Produto com id: {id} foi excluido com sucesso!"}'
+        "404":
+          description: '{"error": "erro ao tentar excluir produto com id: {id}!"}'
+        "500":
+          description: Internal server error
+  /usuarios:
+    post:
+      tags:
+        - "usuarios"
+      summary: Criar usuarios.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Usuarios"
+      responses:
+        "201":
+          description: '{"Sucesso": "Usuario criado com sucesso! id: {id}"}'
+        "500":
+          description: '{"Error": "erro ao criar usuario!"}'
+  /auth/login:
+    post:
+      tags:
+        - "login"
+      summary: Login de usuarios.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Login"
+      responses:
+        "201":
+          description: '{"Sucesso": "Login realizao com sucesso!"}'
+        "500":
+          description: '{"Error": "email ou senha invalida!"}'
+
+components:
+  schemas:
+    Produtos:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        nome:
+          type: string
+          example: Geladeira
+        dt_ult_compra:
+          type: string
+          example: 12092022
+        ult_preco:
+          type: string
+          example: 1299.90
+        id_categoria:
+          type: string
+          example: 1
+    Usuarios:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        nome:
+          type: string
+          example: "Lucas"
+        email:
+          type: string
+          example: "teste@teste.com"
+        senha:
+          type: string
+          example: "dsokfsod"
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+          example: "teste@teste.com"
+        senha:
+          type: string
+          example: "dsokfsod"
